@@ -22,7 +22,7 @@ main = do
   
   -- Step 1: Read raw text file
   putStrLn "\nEnter path to raw text file:"
-  putStrLn "(Example: data/shakespeare_raw.txt)"
+  putStrLn "(Example: data/dataset.txt)"
   filePath <- getLine
   
   rawTextResult <- readRawText filePath
@@ -214,7 +214,7 @@ runInteractiveMode model trainWords testWords = do
     "5" -> do
       -- Exit
       putStrLn "\n👋 Thank you for using N-Gram Text Generator!"
-      putStrLn "   Project by: [Your Team Names]"
+      putStrLn "   Project by:Group No-"
       return ()
     
     _ -> do
