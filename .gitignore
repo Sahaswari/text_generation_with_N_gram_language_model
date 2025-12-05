@@ -1,0 +1,10 @@
+.stack-work/
+.vscode/
+ngram-generator.cabal
+*.exe
+*.exe.manifest
+*.hi
+*.o
+*.prof
+*.dyn_o
+*.dyn_hi
