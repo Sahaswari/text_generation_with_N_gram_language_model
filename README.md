@@ -1,8 +1,8 @@
 # N-Gram Text Generator
 
 ## Group Members
-- Member 1 - [ID]
-- Member 2 - [ID]
+- Senanayaka S.M.S.T.S. - EG/2020/4185
+- Samasundara S.M.R.D.S - EG/2020/4184
 - Member 3 - [ID]
 - Member 4 - [ID]
 
@@ -22,7 +22,7 @@ Text generation is a fundamental task in natural language processing with applic
 ```
 User runs program
       ↓
-Read shakespeare_raw.txt
+Read dataset.txt (data file)
       ↓
 Remove Gutenberg metadata (pure function)
       ↓
@@ -44,7 +44,7 @@ Interactive generation
 
 ### Compilation
 ```bash
-ghc -o ngram-generator src/Main.hs src/DataTypes.hs src/Utils.hs src/Processing.hs src/IOHandler.hs
+ghc -o ngram-generator src/Main.hs src/DataTypes.hs src/Utils.hs src/Processing.hs src/IOHandler.hs src/DataPreprocessing.hs
 ```
 
 ### Execution
@@ -62,7 +62,7 @@ ghci src/Main.hs
 
 ### Input
 ```
-Training file: data/shakespeare.txt
+Training file: data/dataset.txt
 N-gram size: 3
 Seed words: to be or
 Number of words: 15
@@ -134,6 +134,7 @@ src/
 ├── Processing.hs    - Core n-gram algorithms
 ├── IOHandler.hs     - File I/O operations
 └── Utils.hs         - Helper functions
+|__ DataPreprocessing.hs - Prepare the Data for Training
 
 data/
 └── dataset.txt     - Training corpus
