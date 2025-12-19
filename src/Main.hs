@@ -1,4 +1,4 @@
--- Main.hs (Complete updated version)
+-- Main.hs (Complete updated version with Report Generation)
 
 module Main where
 
@@ -6,18 +6,23 @@ import System.Environment (getArgs)
 import System.IO
 import Control.Monad (when)
 import qualified Data.Map.Strict as Map
+import Data.Time.Clock (getCurrentTime, diffUTCTime)
 import DataTypes
 import Processing
 import IOHandler
 import Utils
 import DataPreprocessing
+import ReportGenerator
 
 main :: IO ()
 main = do
+  startTime <- getCurrentTime
+  
   putStrLn "=========================================="
   putStrLn "  N-Gram Text Generator"
   putStrLn "  Functional Programming Project"
   putStrLn "  Pure Haskell Data Processing Pipeline"
+  putStrLn "  📄 Report Generation Enabled"
   putStrLn "=========================================="
   
   -- Step 1: Read raw text file
@@ -90,12 +95,18 @@ main = do
         
         _ -> do
           -- Standard split (default)
-          let split = standardSplit processedWords
-          displaySplitInfo split
-          continueWithTraining 
+          lefilePath
+            config
+            stats
+            split
+            startTime
             (trainingData split) 
             (testingData split) 
             (validationData split)
+
+-- | Continue with model training after data preparation
+continueWithTraining :: FilePath -> PreprocessConfig -> DatasetStats -> DatasetSplit 
+                     -> UTCTime ->Data split)
 
 -- | Continue with model training after data preparation
 continueWithTraining :: [String] -> [String] -> [String] -> IO ()
@@ -138,17 +149,22 @@ continueWithTraining trainWords testWords valWords = do
     displayEvaluationResults perplexity
   
   -- Step 8: Interactive mode
-  runInteractiveMode model trainWords testWords
+  runInteractiveMode inputFile prepConfig dataStats dataSplit startTime 
+                     model modelConfig modelStats trainWords testWords
 
 -- | Interactive mode for text generation and analysis
-runInteractiveMode :: NGramModel -> [String] -> [String] -> IO ()
-runInteractiveMode model trainWords testWords = do
+runInteractiveMode :: FilePath -> PreprocessConfig -> DatasetStats -> DatasetSplit 
+                   -> UTCTime -> NGramModel -> ModelConfig -> ModelStats 
+                   -> [String] -> [String] -> IO ()
+runInteractiveMode inputFile prepConfig dataStats dataSplit startTime 
+                   model modelConfig modelStats trainWords testWords = do
   showMenu
   choice <- getLine
   
   case choice of
     "1" -> do
       -- Generate text
+      genStartTime <- getCurrentTime
       putStrLn "\nEnter seed words (space-separated):"
       putStrLn "(Example: to be or)"
       seedInput <- getLine
@@ -156,31 +172,54 @@ runInteractiveMode model trainWords testWords = do
       
       when (null seed) $ do
         putStrLn "❌ Please provide at least one seed word"
-        runInteractiveMode model trainWords testWords
+        runInteractiveMode inputFile prepConfig dataStats dataSplit startTime 
+                          model modelConfig modelStats trainWords testWords
       
       putStrLn "How many words to generate? [20]:"
       numWordsInput <- getLine
       let numWords = if null numWordsInput 
                      then 20 
                      else read numWordsInput :: Int
+      genEndTime <- getCurrentTime
       
-      putStrLn "\n🎲 Generating text..."
-      generated <- generateText model numWords seed
+      let processingTime = round $ toRational $ diffUTCTime genEndTime startTime * 1000
+      
       displayGeneratedText generated
       
-      putStrLn "Save to file? (y/n):"
-      saveChoice <- getLine
-      when (saveChoice == "y") $ do
-        putStrLn "Enter filename:"
-        filename <- getLine
-        saveGeneratedText filename generated
+      -- Generate and save report
+      putStrLn "\n📊 Generate execution report? (y/n):"
+      reportChoice <- getLine
+      when (reportChoice == "y") $ do
+        timestamp <- getCurrentTime
+        let session = GenerationSession
+              { sessionTimestamp = timestamp
+              , inputFilePath = inputFile
+              , ngramSize = ngramSize modelConfig
+              , seedWords = seed
+              , requestedWords = numWords
+              , generatedText = generated
+              }
+        saveReport session
       
-      runInteractiveMode model trainWords testWords
+      putStrLn "\nSave geinputFile prepConfig dataStats dataSplit startTime 
+                        model modelConfig modelStats trainWords testWords
     
-    "2" -> do
-      -- Show top predictions
-      putStrLn "\nEnter context words (space-separated):"
-      putStrLn "(Example: to be)"
+    "3" -> do
+      -- Show statistics
+      displayModelStats modelStats
+      runInteractiveMode inputFile prepConfig dataStats dataSplit startTime 
+                        model modelConfig modelStats trainWords testWords
+    
+    "4" -> do
+      -- Evaluate on test data
+      if null testWords
+        then putStrLn "⚠️  No test data available"
+        else do
+          putStrLn "\n📊 Evaluating model..."
+          let perplexity = calculatePerplexity model testWords
+          displayEvaluationResults perplexity
+      runInteractiveMode inputFile prepConfig dataStats dataSplit startTime 
+                        model modelConfig modelStatse)"
       contextInput <- getLine
       let context = words contextInput
       
