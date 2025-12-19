@@ -1,0 +1,18 @@
+-- Example: How to generate a simple report in your code
+-- Add this when you generate text in Main.hs
+
+-- After generating text, create a session and save report:
+do
+  timestamp <- getCurrentTime
+  let session = GenerationSession
+        { sessionTimestamp = timestamp
+        , inputFilePath = "data/dataset.txt"  -- your input file
+        , ngramSize = 3                       -- your n-gram size
+        , seedWords = ["to", "be", "or"]      -- your seed words
+        , requestedWords = 20                 -- how many words requested
+        , generatedText = generated           -- the generated text list
+        }
+  saveReport session
+
+-- This will automatically save a report in outputs/reports/ folder
+-- The report will be named: report_YYYYMMDD_HHMMSS.txt

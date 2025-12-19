@@ -1,0 +1,29 @@
+╔═══════════════════════════════════════════════════════════════╗
+║          N-GRAM TEXT GENERATOR - EXECUTION REPORT             ║
+╚═══════════════════════════════════════════════════════════════╝
+
+Report Generated: 2024-12-19 10:30:45 UTC
+═══════════════════════════════════════════════════════════════════
+
+📥 INPUT PARAMETERS
+───────────────────────────────────────────────────────────────────
+• Data File: data/dataset.txt
+• N-gram Size: 3 (Trigram)
+• Seed Words: to be or
+• Requested Words: 20
+
+📤 OUTPUT
+───────────────────────────────────────────────────────────────────
+Generated Text:
+
+to be or not to be that is the question whether tis nobler
+in the mind to suffer the slings and arrows of
+
+Statistics:
+• Total Words Generated: 20
+• Unique Words: 18
+• Average Word Length: 3.45 characters
+
+═══════════════════════════════════════════════════════════════════
+N-Gram Text Generator - Functional Programming Project
+═══════════════════════════════════════════════════════════════════
