@@ -1,324 +1,440 @@
 # N-Gram Text Generator
 
-## Group Members
-- Senanayaka S.M.S.T.S. - EG/2020/4185
-- Samasundara S.M.R.D.S - EG/2020/4184
-- Dissanayaka R.P.L.M   - EG/2020/3909
-- Dissanayaka D.M.C.L   - EG/2020/3903
+## Mini Project - Functional Programming - Group 11
 
-## Project Title
-N-Gram Language Model for Text Generation using Functional Programming
+**Title:** Text Generation with N-gram Language Model
 
-## Problem Description
-Text generation is a fundamental task in natural language processing with applications in autocomplete, chatbots, code completion, and creative writing assistance. This project implements a probabilistic language model that learns patterns from text and generates new, contextually relevant sequences.
+---
 
-## Real-World Scenario
-- **Autocomplete Systems**: Google Search, smartphone keyboards
-- **Code Completion**: GitHub Copilot, VS Code IntelliSense
-- **Chatbots**: Customer service, virtual assistants
-- **Creative Writing**: Story generation, poetry assistance
+## Team Members: Group 11
 
-## 📋 **EXECUTION FLOW**
-```
-User runs program
-      ↓
-Read dataset.txt (data file)
-      ↓
-Remove Gutenberg metadata (pure function)
-      ↓
-Preprocess text (pure function)
-      ↓
-Split 70/15/15 (pure function)
-      ↓
-Train model on 70% (pure function)
-      ↓
-Evaluate on 15% test (pure function)
-      ↓
-Interactive generation
+| Name | Registration Number |
+|------|---------------------|
+| Senanayaka S.M.S.T.S | EG/2020/4185 |
+| Samasundara S.M.R.D.S | EG/2020/4184 |
+| Dissanayaka R.P.L.M. | EG/2020/3909 |
+| Dissanayaka D.M.C.L. | EG/2020/3903 |
 
-## How to Run
+---
+
+## Project Links
+
+**Project Code Link:**  
+https://github.com/Sahaswari/text_generation_with_N_gram_language_model.git
+
+**Project Video Link:**  
+https://youtu.be/px1O29Y3twk
+
+---
+
+## Table of Contents
+
+1. [Setup Guide](#setup-guide)
+2. [Introduction](#1-introduction)
+3. [Functional Design](#2-functional-design)
+4. [Functional Programming Concepts Implementation](#3-functional-programming-concepts-implementation)
+5. [Expected Outputs and Validation](#4-expected-outputs-and-validation)
+6. [Conclusion](#5-conclusion)
+
+---
+
+## Setup Guide
 
 ### Prerequisites
-- GHC (Glasgow Haskell Compiler) version 8.10 or higher
-- Text corpus file (provided in data/ folder)
 
-### Compilation
-```bash
-ghc -o ngram-generator src/Main.hs src/DataTypes.hs src/Utils.hs src/Processing.hs src/IOHandler.hs src/DataPreprocessing.hs
-```
+- **Stack** (Haskell build tool) - Recommended
+- OR **GHC** (Glasgow Haskell Compiler) version 8.10 or higher
+- Text corpus file (provided in `data/` folder)
 
-### Execution
-```bash
-./ngram-generator
-```
+### Installation Steps
 
-Or using GHCi:
+#### Option 1: Using Stack (Recommended)
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Sahaswari/text_generation_with_N_gram_language_model.git
+   cd text_generation_with_N_gram_language_model
+   ```
+
+2. **Build the project**
+   ```bash
+   stack build
+   ```
+   Note: First build will download GHC and dependencies automatically.
+
+3. **Run the application**
+   ```bash
+   stack exec ngram-generator-exe
+   ```
+
+#### Option 2: Using GHC Directly
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Sahaswari/text_generation_with_N_gram_language_model.git
+   cd text_generation_with_N_gram_language_model
+   ```
+
+2. **Compile the project**
+   ```bash
+   ghc -o ngram-generator src/Main.hs src/DataTypes.hs src/Utils.hs src/Processing.hs src/IOHandler.hs src/DataPreprocessing.hs src/ReportGenerator.hs
+   ```
+
+3. **Run the executable**
+   ```bash
+   ./ngram-generator
+   ```
+   On Windows:
+   ```bash
+   ngram-generator.exe
+   ```
+
+#### Option 3: Using GHCi (Interactive)
+
 ```bash
 ghci src/Main.hs
 > main
 ```
 
-## Sample Input/Output
+### Project Structure
 
-### Input
 ```
-Training file: data/dataset.txt
-N-gram size: 3
-Seed words: to be or
-Number of words: 15
+text_generation_with_N_gram_language_model/
+├── src/
+│   ├── Main.hs              - Entry point and user interface
+│   ├── DataTypes.hs         - Type definitions
+│   ├── DataPreprocessing.hs - Text cleaning and tokenization
+│   ├── Processing.hs        - N-gram model building and generation
+│   ├── IOHandler.hs         - File I/O operations
+│   ├── ReportGenerator.hs   - Report generation
+│   └── Utils.hs             - Helper functions
+├── data/
+│   └── dataset.txt          - Training corpus
+├── outputs/
+│   └── reports/             - Generated reports
+├── package.yaml             - Project configuration
+├── stack.yaml               - Stack configuration
+└── README.md
 ```
 
-### Output
-```
-to be or not to be that is the question whether tis nobler
-```
+---
 
-## Functional Programming Concepts Used
+## 1. Introduction
 
-### 1. Pure Functions
-All core logic functions are pure (no side effects):
+The project is to develop a text generation system using N-gram language models that can predict the next word based on previous words using the Haskell based implementation environment. It demonstrates pure functional principles while solving a real world NLP problem.
+
+### Industry Applications
+
+**Natural Language Processing (NLP) Applications:**
+- Autocomplete features in search engines and text editors
+- Predictive text input on mobile keyboards
+- Chatbot response generation
+- Content suggestion systems
+
+**Business Value:**
+- Improves user experience in text-based applications
+- Reduces typing time and effort (productivity enhancement)
+- Powers recommendation systems in messaging apps
+
+**Why Statistical Approach Matters:**
+- N-gram models provide probabilistic understanding of language patterns
+- Computationally efficient compared to deep learning alternatives
+- Transparent and explainable predictions
+- Suitable for resource-constrained environments
+
+### Screenshots
+
+**Application Startup:**
+
+![Application Startup](images/starting.png)
+
+**Text Generation Output:**
+
+![Generated Text Output](images/generated.png)
+
+---
+
+## 2. Functional Design
+
+### Main Data Types (ADTs)
+
+#### 1. NGram Type
+
+Represents the sequence of words used as context. Simple alias for clarity and maintainability.
+
 ```haskell
-buildNGramModel :: ModelConfig -> [String] -> NGramModel
+type NGram = [String]
 ```
 
-### 2. Immutability
-All data structures are immutable:
+#### 2. NGramModel Type
+
+Maps N-gram contexts to possible next words. Associate list structure for functional manipulation.
+
 ```haskell
-type NGramModel = Map.Map NGram (Map.Map Word Int)
+type NGramModel = Map.Map NGram (Map.Map Token Int)
 ```
 
-### 3. Recursion
-Text generation uses tail recursion:
-```haskell
-generateLoop :: NGramModel -> Int -> [String] -> [String] -> IO [String]
-```
+#### 3. GenerationSession Record
 
-### 4. Higher-Order Functions
-Extensive use of map, fold, filter:
-```haskell
-let ngrams = ngramsOf (n + 1) markedWords
-in foldl' (insertNGram n) Map.empty ngrams
-```
+Encapsulates all information about a generation run. Used for report generation and tracking.
 
-### 5. Algebraic Data Types (ADT)
-Custom types for configuration:
 ```haskell
-data ModelConfig = ModelConfig
-  { ngramSize :: Int
-  , minFrequency :: Int
-  , smoothing :: Bool
+data GenerationSession = GenerationSession
+  { sessionTimestamp    :: UTCTime
+  , inputFilePath       :: FilePath
+  , ngramSize          :: Int
+  , seedWords          :: [String]
+  , requestedWords     :: Int
+  , generatedText      :: [String]
   }
 ```
 
-### 6. Type Safety
-Strong typing prevents runtime errors:
+### Key Function Modules
+
+| Module | Responsibility |
+|--------|---------------|
+| Text Processing Module | Cleaning, tokenization, preprocessing |
+| Model Building Module | N-gram extraction and frequency counting |
+| Text Generation Module | Probabilistic word prediction |
+| Helper Functions (Pure) | Utility operations without side effects |
+
+### Screenshots
+
+**Model Training Process:**
+
+![Model training statistics](images/model_statistics.png)
+
+
+<!-- Add screenshot here: ![Training](images/training.png) -->
+
+**Interactive Menu:**
+
+![Interactive menu options](images/interactive.png)
+
+<!-- Add screenshot here: ![Menu](images/menu.png) -->
+
+---
+
+## 3. Functional Programming Concepts Implementation
+
+### Pure Functions
+
+**Benefits:**
+- Easy to test individual functions in isolation
+- Predictable behavior makes debugging simpler
+- Functions can be reused and composed safely
+
+**Implementation in the code:**
+
 ```haskell
-type NGram = [String]
-type NGramModel = Map.Map NGram (Map.Map Word Int)
+cleanWord :: String -> String                    -- Deterministic text cleaning
+generateNGrams :: Int -> [String] -> [NGram]     -- Pure transformation of word lists
+averageLength :: [String] -> Double              -- Statistical calculation without side effects
+removeDuplicates :: Eq a => [a] -> [a]           -- Pure list processing
+wrapText :: Int -> String -> String              -- Pure text formatting
+formatDouble :: Double -> String                 -- Pure number formatting
+getModelType :: Int -> String                    -- Pure mapping from number to string
 ```
 
-### 7. Lazy Evaluation
-Processing large files efficiently through lazy I/O
+---
 
-### 8. Monadic I/O
-Clean separation of pure and impure code:
+### Recursion
+
+**Benefits:**
+- Natural representation of iterative processes
+- Eliminates need for mutable loop counters
+- Aligns with mathematical induction principles
+- Easier to reason about correctness
+
+**Implementation in the project code:**
+
+- `generateText` function uses recursion to build text word by word
+- `removeDuplicates` uses recursive pattern matching:
+  - Base case: empty list returns empty list
+  - Recursive case: keeps first element, filters it from rest, recurses
+- `wrapText` recursively processes words for line wrapping:
+  - Base case: no more words to process
+  - Recursive case: adds words to current line until width exceeded
+  - Builds output line by line through recursion
+
 ```haskell
-main :: IO ()
+removeDuplicates :: Eq a => [a] -> [a]
+removeDuplicates [] = []
+removeDuplicates (x:xs) = x : removeDuplicates (filter (/= x) xs)
 ```
 
-## Project Structure
+---
+
+### Algebraic Data Types (ADTs)
+
+**Benefits:**
+- Type safety prevents invalid data combinations
+- Pattern matching enables exhaustive case handling
+- Cannot create invalid session states
+
+**Implementation in the project code:**
+
+`GenerationSession` record type - Complete ADT with six named fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| sessionTimestamp | UTCTime | When generation occurred |
+| inputFilePath | FilePath | Source data file |
+| ngramSize | Int | Model order (2, 3, 4, etc.) |
+| seedWords | [String] | Starting words |
+| requestedWords | Int | Desired output length |
+| generatedText | [String] | Actual generated output |
+
+- Derives Show for easy display
+- Type aliases (NGram, NGramModel) for clarity
+- Built-in ADTs used: Maybe, Either, Lists, UTCTime
+
+---
+
+### Higher-Order Functions
+
+**Benefits:**
+- Code Density and Maintainability
+- Memory Efficiency and Performance
+- Parallelization and Concurrency
+
+**Implementation in the project code:**
+
+```haskell
+-- map: Apply functions to all elements
+map cleanWord words
+map length words
+map formatTimestamp times
+
+-- filter: Remove elements based on predicate
+filter (not . null) words          -- Remove empty strings
+filter (/= x) xs                   -- Remove specific element in removeDuplicates
+
+-- foldr/foldl: Accumulate results
+sum $ map length words             -- Sum of all word lengths
+
+-- Function composition with (.):
+(not . null)                       -- Compose negation with null check
 ```
-src/
-├── Main.hs          - Entry point and user interface
-├── DataTypes.hs     - Type definitions
-├── Processing.hs    - Core n-gram algorithms
-├── IOHandler.hs     - File I/O operations
-└── Utils.hs         - Helper functions
-|__ DataPreprocessing.hs - Prepare the Data for Training
 
-data/
-└── dataset.txt     - Training corpus
+---
+
+### Immutability
+
+All data structures in the project are immutable. New values are created instead of modifying existing ones.
+
+```haskell
+type NGramModel = Map.Map NGram (Map.Map Token Int)
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        APPLICATION LAYERS                   │
-├─────────────────────────────────────────────────────────────┤
-│  Main.hs                 → Orchestration & User Interface   │
-├─────────────────────────────────────────────────────────────┤
-│  IOHandler.hs            → I/O Operations & Display         │
-├─────────────────────────────────────────────────────────────┤
-│  DataPreprocessing.hs    → RAW TEXT → CLEAN TOKENS          │
-│                            (Data Engineering Layer)         │
-├─────────────────────────────────────────────────────────────┤
-│  Processing.hs           → TOKENS → N-GRAM MODEL            │
-│                            (Machine Learning Layer)         │
-├─────────────────────────────────────────────────────────────┤
-│  Utils.hs                → Shared Utilities                 │
-├─────────────────────────────────────────────────────────────┤
-│  DataTypes.hs            → Type Definitions                 │
-└─────────────────────────────────────────────────────────────┘
 
-## Features
-- Bigram, Trigram, and 4-gram models
-- Interactive text generation
-- Top prediction display
-- Model statistics
-- Perplexity calculation
-- Fallback for unseen contexts
-- Export generated text
+---
 
-## Future Extensions
+### Lazy Evaluation
+
+Lists are processed on demand, enabling efficient handling of large datasets without loading everything into memory.
+
+### Screenshots
+
+**Code Structure - Pure Functions:**
+
+[Image: Pure function examples in code]
+
+<!-- Add screenshot here: ![PureFunctions](images/pure_functions.png) -->
+
+**Code Structure - Higher-Order Functions:**
+
+[Image: Higher-order function usage]
+
+<!-- Add screenshot here: ![HOF](images/hof.png) -->
+
+---
+
+## 4. Expected Outputs and Validation
+
+### Sample Input
+
+```
+INPUT PARAMETERS
+- Data File: data/dataset.txt
+- N-gram Size: 3 (Trigram)
+- Seed Words: to be
+- Requested Words: 20
+```
+
+### Sample Output
+
+```
+OUTPUT
+Generated Text:
+to be entangled with those mouth-made vows which break themselves in her that the men might go on wheels
+
+Statistics:
+- Total Words Generated: 20
+- Unique Words: 18
+- Average Word Length: 4.5 characters
+```
+
+### Screenshots
+
+**Generation Results:**
+
+[Image: Sample generation output]
+
+<!-- Add screenshot here: ![Results](images/results.png) -->
+
+**Model Statistics:**
+
+[Image: Model statistics display]
+
+<!-- Add screenshot here: ![Stats](images/stats.png) -->
+
+---
+
+## 5. Conclusion
+
+This N-gram text generator demonstrates how functional programming principles create robust, maintainable, and scalable software. The use of pure functions, immutability, and strong typing provides reliability guarantees that are difficult to achieve in imperative languages, while the functional approach naturally supports concurrent execution without additional complexity.
+
+### Key Achievements
+
+- Implemented working N-gram language model in pure Haskell
+- Demonstrated core functional programming concepts
+- Created interactive text generation system
+- Built modular, testable codebase with clear separation of concerns
+
+### Future Extensions
+
 - Add smoothing techniques (Laplace, Good-Turing)
 - Implement beam search for better generation
-- Add sentence boundary detection
-- Support multiple languages
-- Web interface using Servant
-```
-
-## Data Processing Pipeline
-
-Our project demonstrates functional data processing:
-
-1. **Single Input**: shakespeare_raw.txt
-2. **Pure Functions**: All processing in Haskell
-3. **Automatic Splitting**: 70% train, 15% validation, 15% test
-4. **No External Tools**: Everything in Haskell
-
-This showcases functional programming principles:
-- Pure, testable functions
-- Immutable data transformations
-- Type-safe pipeline
-- Function composition
----
-
-## **PART 7: Technical Report Outline**
-
-Create a 3-4 page report with these sections:
-
-### **Section 1: Problem Statement (0.5 page)**
-```
-1.1 Introduction
-- What is text generation?
-- Why is it important?
-
-1.2 Industrial Motivation
-- Autocomplete systems (Google, smartphones)
-- Code completion (GitHub Copilot)
-- Chatbots and virtual assistants
-- Content creation tools
-
-1.3 Why N-Grams?
-- Simple yet effective
-- Foundation of language modeling
-- Used in production systems
-```
-
-### **Section 2: Functional Design (1 page)**
-```
-2.1 Architecture Overview
-[Diagram showing: Input → Cleaning → Training → Model → Generation → Output]
-
-2.2 Key Type Signatures
-type NGram = [String]
-type NGramModel = Map.Map NGram (Map.Map Word Int)
-
-buildNGramModel :: ModelConfig -> [String] -> NGramModel
-generateText :: NGramModel -> Int -> [String] -> IO [String]
-
-2.3 Data Flow
-1. Read text file
-2. Clean and tokenize
-3. Build n-gram frequency map
-4. Generate text using probabilities
-```
-
-### **Section 3: FP Concepts Application (1 page)**
-```
-3.1 Pure Functions
-- All training logic is pure
-- Example: buildNGramModel has no side effects
-
-3.2 Immutability
-- Model never modified after creation
-- New data structures created on updates
-
-3.3 Recursion
-- generateLoop uses tail recursion
-- ngramsOf recursively creates n-grams
-
-3.4 Higher-Order Functions
-- foldl' for accumulation
-- map for transformations
-- filter for cleaning
-
-3.5 Type Safety
-- Compile-time guarantees
-- No null pointer exceptions
-```
-
-### **Section 4: Results & Discussion (0.75 page)**
-```
-4.1 Model Performance
-- Bigram: Fast but less coherent
-- Trigram: Good balance
-- 4-gram: Best quality
-
-4.2 Sample Outputs
-[Show actual generated text examples]
-
-4.3 Perplexity Scores
-[If you calculated them]
-
-4.4 Why FP Improves This System
-- Correctness: Pure functions are testable
-- Reliability: No hidden state bugs
-- Concurrency: Easy to parallelize (future work)
-- Maintainability: Clear data flow
-```
-
-### **Section 5: Conclusion & Extensions (0.25 page)**
-```
-5.1 Achievements
-- Implemented working n-gram model
-- Demonstrated FP principles
-- Generated coherent text
-
-5.2 Possible Extensions
-- Add smoothing techniques
-- Implement beam search
 - Support multiple languages
 - Build web interface
-- Add neural language models
+
+---
+
+## Usage Examples
+
+### Bigram Model (1-word context)
+
+```
+N-gram size: 2
+Seed: the
+Words: 15
+```
+
+### Trigram Model (2-word context) - Recommended
+
+```
+N-gram size: 3
+Seed: to be
+Words: 20
+```
+
+### 4-gram Model (3-word context)
+
+```
+N-gram size: 4
+Seed: to be or
+Words: 15
 ```
 
 ---
 
-## **PART 8: Presentation Script (5-10 minutes)**
-
-### **Slide 1: Title (30 seconds)**
-```
-"N-Gram Text Generator using Functional Programming"
-Team Members: [Names]
-```
-
-### **Slide 2: Problem (1 minute)**
-```
-"Text generation powers:
-- Google autocomplete
-- GitHub Copilot
-- ChatGPT (advanced version)
-- Smartphone keyboards"
-
-Show example: Type "the cat" → suggests "sat on the mat"
-```
-
-### **Slide 3: Our Approach (1 minute)**
-```
-"We built an N-gram language model:
-1. Learn patterns from text
-2. Calculate probabilities
-3. Generate new text
-
-Example: After 'to be', model learns:
-- 'or' appears 60%
-- 'that' appears 30%
-- 'the' appears 10%"
