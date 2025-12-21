@@ -17,21 +17,25 @@ import Utils
 
 -- | Build an n-gram model from a list of words
 -- This is the main training function
+-- For n-gram: context is (n-1) words, predicting the nth word
+-- Bigram (n=2): 1 word context -> next word
+-- Trigram (n=3): 2 word context -> next word
 buildNGramModel :: ModelConfig -> [String] -> NGramModel
 buildNGramModel config words =
   let n = ngramSize config
       -- Add sentence markers to help model learn sentence boundaries
       markedWords = addSentenceMarkers words
-      -- Create all n-grams of size n+1 (context + next word)
-      ngrams = ngramsOf (n + 1) markedWords
-  in foldl' (insertNGram n) Map.empty ngrams
+      -- Create all n-grams of size n (context of n-1 + next word)
+      ngrams = ngramsOf n markedWords
+  in foldl' (insertNGram (n - 1)) Map.empty ngrams
 
 -- | Insert a single n-gram into the model
 -- Takes an n-gram like ["to", "be", "or"] and updates the frequency map
+-- For trigram: context=["to","be"], nextWord="or"
 insertNGram :: Int -> NGramModel -> [String] -> NGramModel
-insertNGram n model ngram =
-  let context = take n ngram      -- ["to", "be"]
-      nextWord = last ngram        -- "or"
+insertNGram contextSize model ngram =
+  let context = take contextSize ngram  -- For trigram: ["to", "be"]
+      nextWord = last ngram              -- For trigram: "or"
   in Map.insertWith (Map.unionWith (+)) 
                     context 
                     (Map.singleton nextWord 1) 
@@ -71,25 +75,30 @@ selectNextWord model context =
 -- Perplexity measures how "surprised" the model is by the test data
 calculatePerplexity :: NGramModel -> [String] -> Double
 calculatePerplexity model testWords =
-  let n = case Map.keys model of
-            [] -> 2
+  let contextSize = case Map.keys model of
+            [] -> 1
             (k:_) -> length k
-      ngrams = ngramsOf (n + 1) testWords
-      totalNGrams = length ngrams
-      logProbs = map (logProbability model n) ngrams
-      avgLogProb = sum logProbs / fromIntegral totalNGrams
-  in exp (-avgLogProb)
+      ngramSize' = contextSize + 1  -- n-gram size = context + 1
+      ngrams = ngramsOf ngramSize' testWords
+      totalNGrams' = length ngrams
+  in if totalNGrams' == 0
+     then 1.0 / 0.0  -- Infinity
+     else let logProbs = map (logProbability model contextSize) ngrams
+              avgLogProb = sum logProbs / fromIntegral totalNGrams'
+          in exp (-avgLogProb)
   where
     logProbability :: NGramModel -> Int -> [String] -> Double
-    logProbability mdl n ngram =
-      let context = take n ngram
+    logProbability mdl ctxSize ngram =
+      let context = take ctxSize ngram
           nextWord = last ngram
       in case Map.lookup context mdl of
            Nothing -> log 0.0001  -- Smoothing for unseen n-grams
            Just wordFreqs ->
              let total = sum $ Map.elems wordFreqs
                  count = Map.findWithDefault 0 nextWord wordFreqs
-             in log (fromIntegral count / fromIntegral total)
+             in if count == 0
+                then log 0.0001
+                else log (fromIntegral count / fromIntegral total)
 
 -- | Get model statistics
 getModelStats :: NGramModel -> [String] -> ModelStats
