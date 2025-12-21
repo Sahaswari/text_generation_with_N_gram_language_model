@@ -3,8 +3,8 @@
 ## Group Members
 - Senanayaka S.M.S.T.S. - EG/2020/4185
 - Samasundara S.M.R.D.S - EG/2020/4184
-- Member 3 - [ID]
-- Member 4 - [ID]
+- Dissanayaka R.P.L.M   - EG/2020/3909
+- Dissanayaka D.M.C.L   - EG/2020/3903
 
 ## Project Title
 N-Gram Language Model for Text Generation using Functional Programming
