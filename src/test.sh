@@ -5,7 +5,7 @@ echo "=== Testing N-Gram Generator ==="
 echo "Test 1: Compilation"
 ghc -o ngram-generator src/Main.hs src/DataTypes.hs src/Utils.hs src/Processing.hs src/IOHandler.hs
 if [ $? -eq 0 ]; then
-    echo "✅ Compilation successful"
+    echo "Compilation successful"
 else
     echo "❌ Compilation failed"
     exit 1

@@ -26,7 +26,7 @@ readRawText filePath = do
   case result of
     Left err -> return $ Left err
     Right content -> do
-      putStrLn $ "✅ Successfully read " ++ show (length content) ++ " characters"
+      putStrLn $ "Success: read " ++ show (length content) ++ " characters"
       return $ Right content
   where
     handleError :: IOException -> IO (Either String String)
@@ -61,7 +61,7 @@ displaySplitInfo split = do
 saveGeneratedText :: FilePath -> [String] -> IO ()
 saveGeneratedText filePath words = do
   writeFile filePath (unwords words)
-  putStrLn $ "✅ Generated text saved to: " ++ filePath
+  putStrLn $ "Generated text saved to: " ++ filePath
 
 -- | Display model statistics
 displayModelStats :: ModelStats -> IO ()
@@ -101,7 +101,7 @@ displayEvaluationResults perplexity = do
   where
     interpretPerplexity p
       | p < 50    = "Excellent! 🌟"
-      | p < 100   = "Very Good! ✅"
+      | p < 100   = "Very Good!"
       | p < 200   = "Good 👍"
       | p < 400   = "Acceptable"
       | otherwise = "Needs Improvement"

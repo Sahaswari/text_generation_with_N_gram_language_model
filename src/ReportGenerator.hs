@@ -17,7 +17,6 @@ module ReportGenerator
 import Data.Time.Clock
 import Data.Time.Format
 import System.Directory (createDirectoryIfMissing)
-import DataTypes
 
 -- ============================================================================
 -- REPORT DATA TYPES
@@ -47,14 +46,14 @@ generateSimpleReport session = unlines
   , "Report Generated: " ++ formatTimestamp (sessionTimestamp session)
   , "═══════════════════════════════════════════════════════════════════"
   , ""
-  , "📥 INPUT PARAMETERS"
+  , "INPUT PARAMETERS"
   , "───────────────────────────────────────────────────────────────────"
   , "• Data File: " ++ inputFilePath session
   , "• N-gram Size: " ++ show (ngramSize session) ++ " (" ++ getModelType (ngramSize session) ++ ")"
   , "• Seed Words: " ++ unwords (seedWords session)
   , "• Requested Words: " ++ show (requestedWords session)
   , ""
-  , "📤 OUTPUT"
+  , "OUTPUT"
   , "───────────────────────────────────────────────────────────────────"
   , "Generated Text:"
   , ""
@@ -85,7 +84,7 @@ saveReport session = do
   let fullPath = "outputs/reports/" ++ filename
   
   writeFile fullPath report
-  putStrLn $ "\n✅ Report saved to: " ++ fullPath
+  putStrLn $ "\nReport saved to: " ++ fullPath
 
 -- ============================================================================
 -- HELPER FUNCTIONS
